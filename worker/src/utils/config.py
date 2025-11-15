@@ -16,6 +16,10 @@ class Settings(BaseSettings):
     # Price feed
     PRICE_FEED_URL: str = Field(default='https://api.coingecko.com/api/v3/simple/price')
 
+    # Backend API integration (for cached prices and metadata)
+    BACKEND_API_URL: str = Field(default='http://localhost:8000')
+    USE_BACKEND_INTEGRATION: bool = Field(default=True)
+
     # Redis for queue-based execution
     REDIS_URL: str = Field(default='redis://localhost:6379/0')
 

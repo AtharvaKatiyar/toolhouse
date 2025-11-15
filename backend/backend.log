@@ -1,0 +1,74 @@
+nohup: ignoring input
+/home/mime/Desktop/autometa/backend/venv/lib/python3.12/site-packages/web3/__init__.py:2: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+{"name": "autometa-backend", "message": "\u2705 Connected to Moonbase Alpha (Chain ID: 1287)", "taskName": "Task-1", "timestamp": "2025-11-15 23:22:50,685", "level": "INFO"}
+{"name": "autometa-backend", "message": "Loaded ABI: WorkflowRegistry.json", "taskName": "Task-1", "timestamp": "2025-11-15 23:22:50,687", "level": "INFO"}
+{"name": "autometa-backend", "message": "RegistryService initialized with relayer: 0x6Db011ec0EA5F23aCa9410cfD343DdFD50741649", "taskName": "Task-1", "timestamp": "2025-11-15 23:22:50,702", "level": "INFO"}
+{"name": "autometa-backend", "message": "Loaded ABI: FeeEscrow.json", "taskName": "Task-1", "timestamp": "2025-11-15 23:22:50,712", "level": "INFO"}
+{"name": "autometa-backend", "message": "EscrowService initialized for 0x6a4E6dA8A8B9C1a178d7B1E4EE1279653A806C7e", "taskName": "Task-1", "timestamp": "2025-11-15 23:22:50,721", "level": "INFO"}
+{"name": "autometa-backend", "message": "PriceService connected to Redis", "taskName": "Task-1", "timestamp": "2025-11-15 23:22:50,793", "level": "INFO"}
+INFO:     Started server process [51972]
+INFO:     Waiting for application startup.
+{"name": "autometa-backend", "message": "Starting Autometa Backend API", "taskName": "Task-2", "timestamp": "2025-11-15 23:22:50,801", "level": "INFO"}
+{"name": "autometa-backend", "message": "App Name: Autometa Backend API", "taskName": "Task-2", "timestamp": "2025-11-15 23:22:50,801", "level": "INFO"}
+{"name": "autometa-backend", "message": "Chain ID: 1287", "taskName": "Task-2", "timestamp": "2025-11-15 23:22:50,801", "level": "INFO"}
+{"name": "autometa-backend", "message": "Web3 Connected: True", "taskName": "Task-2", "timestamp": "2025-11-15 23:22:51,046", "level": "INFO"}
+{"name": "autometa-backend", "message": "Workflow Registry: 0x87bb7A86E657f1dDd2e84946545b6686935E3a56", "taskName": "Task-2", "timestamp": "2025-11-15 23:22:51,046", "level": "INFO"}
+{"name": "autometa-backend", "message": "Action Executor: 0x1Cb45BceCC3f0CEd2875b49d4f6dd5543B2bD559", "taskName": "Task-2", "timestamp": "2025-11-15 23:22:51,046", "level": "INFO"}
+{"name": "autometa-backend", "message": "Fee Escrow: 0x6a4E6dA8A8B9C1a178d7B1E4EE1279653A806C7e", "taskName": "Task-2", "timestamp": "2025-11-15 23:22:51,046", "level": "INFO"}
+{"name": "autometa-backend", "message": "Connected to chain ID: 1287", "taskName": "Task-2", "timestamp": "2025-11-15 23:22:51,525", "level": "INFO"}
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:37746 - "GET /api/utils/healthz HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44310 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44314 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52868 - "GET /api/workflow HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52874 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52868 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52874 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45994 - "GET /api/escrow HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45996 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45994 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45996 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51802 - "GET /api/utils/healthz HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51812 - "GET /api/utils/contracts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53064 - "GET /api/utils/healthz HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53078 - "GET /api/utils/contracts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40834 - "GET /api/utils/healthz HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40850 - "GET /api/utils/contracts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60306 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60314 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:36798 - "GET /api/price HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:36798 - "GET /api/price/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36808 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:36798 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36808 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:41966 - "GET /api/utils HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:41978 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:41966 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41978 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60354 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60358 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:34828 - "POST /api/workflow/encode HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:34828 - "POST /api/workflow/encode HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:56790 - "GET /api/workflow/encode HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:56796 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56790 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56796 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:38848 - "POST /api/workflow/encode HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:46764 - "GET /api/workflow/encode HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:46776 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:59224 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59230 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60434 - "GET /utils HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60442 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52354 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38556 - "GET /api/utils/action-types HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38570 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:44460 - "GET /api/utils/healthz HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44464 - "GET /api/utils/contracts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44474 - "GET /api/price/ HTTP/1.1" 200 OK
+{"name": "autometa-backend", "message": "Fetched price for ethereum: $3211.72", "taskName": "Task-52", "timestamp": "2025-11-15 23:32:34,145", "level": "INFO"}
+INFO:     127.0.0.1:44486 - "GET /api/price/ethereum HTTP/1.1" 200 OK
+{"name": "autometa-backend", "message": "Retrieved 0 workflows for 0x7235a755be3e1a5194c34683b6cF24FFB16D0CF1", "taskName": "Task-55", "timestamp": "2025-11-15 23:32:45,293", "level": "INFO"}
+INFO:     127.0.0.1:35756 - "GET /api/workflow/user/0x7235a755be3e1a5194c34683b6cF24FFB16D0CF1 HTTP/1.1" 200 OK

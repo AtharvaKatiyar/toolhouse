@@ -1,5 +1,7 @@
 from typing import Dict, Any
-from ..adapters.price_adapter import PriceAdapter
+from ..adapters.enhanced_price_adapter import EnhancedPriceAdapter
+from ..utils.config import settings
+from ..utils.logger import logger
 import asyncio
 
 COMPARATORS = {
@@ -10,7 +12,17 @@ COMPARATORS = {
 }
 
 class PriceTrigger:
-    def __init__(self, adapter: PriceAdapter):
+    def __init__(self, adapter: EnhancedPriceAdapter = None):
+        """
+        Initialize price trigger with optional adapter
+        
+        Args:
+            adapter: Price adapter (defaults to EnhancedPriceAdapter with backend integration)
+        """
+        if adapter is None:
+            # Use enhanced adapter with backend integration by default
+            adapter = EnhancedPriceAdapter(use_backend=settings.USE_BACKEND_INTEGRATION)
+        
         self.adapter = adapter
 
     async def is_ready(self, workflow: Dict[str, Any]) -> bool:
@@ -26,8 +38,20 @@ class PriceTrigger:
         token = td.get('token')
         comparator = int(td.get('comparator', 0))
         target = float(td.get('price_usd', 0.0))
-        price, src = await self.adapter.get_price_usd(token)
+        
+        # Fetch price using enhanced adapter (backend-first strategy)
+        price, source = await self.adapter.get_price_usd(token)
+        
+        # Log price check with source
+        logger.debug(f"💰 Price check for {token}: ${price} (from {source}) vs target ${target}")
+        
         cmp_fn = COMPARATORS.get(comparator)
         if cmp_fn is None:
             return False
-        return cmp_fn(price, target)
+        
+        result = cmp_fn(price, target)
+        
+        if result:
+            logger.info(f"✅ Trigger condition met: {token} ${price} ({source})")
+        
+        return result
