@@ -1,0 +1,50 @@
+{
+  "name": "autometa-contracts",
+  "version": "1.0.0",
+  "description": "Smart contracts for Autometa workflow automation platform",
+  "main": "index.js",
+  "scripts": {
+    "test": "hardhat test",
+    "test:coverage": "hardhat coverage",
+    "compile": "hardhat compile",
+    "compile:sync": "hardhat compile && cd .. && ./sync-abis.sh",
+    "deploy:local": "hardhat run scripts/deploy.js --network localhost",
+    "deploy:moonbeam": "hardhat run scripts/deploy.js --network moonbeam",
+    "deploy:moonriver": "hardhat run scripts/deploy.js --network moonriver",
+    "deploy:moonbase": "hardhat run scripts/deploy.js --network moonbaseAlpha",
+    "deploy:testnet": "hardhat run scripts/deploy.js --network moonbaseAlpha",
+    "deploy:sync": "hardhat run scripts/deploy.js --network moonbaseAlpha && cd .. && ./sync-abis.sh",
+    "verify:moonbeam": "hardhat verify --network moonbeam",
+    "verify:moonriver": "hardhat verify --network moonriver",
+    "verify:moonbase": "hardhat verify --network moonbaseAlpha",
+    "balance": "hardhat run scripts/check-balance.js",
+    "info": "hardhat run scripts/moonbeam-info.js",
+    "sync-abi": "cd .. && ./sync-abis.sh",
+    "node": "hardhat node",
+    "clean": "hardhat clean"
+  },
+  "keywords": ["hardhat", "ethereum", "solidity", "automation", "moonbeam", "polkadot"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
+    "@nomicfoundation/hardhat-ethers": "^3.0.0",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "@nomicfoundation/hardhat-verify": "^2.0.0",
+    "@typechain/ethers-v6": "^0.5.0",
+    "@typechain/hardhat": "^9.0.0",
+    "@types/chai": "^4.3.0",
+    "@types/mocha": "^10.0.0",
+    "chai": "^4.3.0",
+    "hardhat": "^2.19.0",
+    "hardhat-gas-reporter": "^1.0.9",
+    "solidity-coverage": "^0.8.5",
+    "typechain": "^8.3.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.9.3",
+    "dotenv": "^16.3.1",
+    "ethers": "^6.9.0"
+  }
+}
