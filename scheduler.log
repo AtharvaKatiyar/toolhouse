@@ -1,2 +1,5 @@
 nohup: ignoring input
 nohup: failed to run command 'venv/bin/python': No such file or directory
+nohup: ignoring input
+nohup: failed to run command 'python': No such file or directory
+/home/mime/Desktop/autometa/backend/venv/bin/python: Error while finding module specification for 'src.main' (ModuleNotFoundError: No module named 'src')

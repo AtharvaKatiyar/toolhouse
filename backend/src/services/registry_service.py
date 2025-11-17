@@ -2,6 +2,7 @@
 Registry Service - Interact with WorkflowRegistry contract
 """
 from typing import List, Dict, Any, Optional
+import time
 from web3 import Web3
 from ..utils.web3_provider import w3
 from ..utils.config import settings
@@ -61,6 +62,9 @@ class RegistryService:
             max_priority_fee = w3.to_wei(2, 'gwei')
             max_fee = (base_fee * 2) + max_priority_fee
             
+            # Get nonce (includes pending transactions)
+            nonce = w3.eth.get_transaction_count(self.relayer.address, 'pending')
+            
             # Build transaction
             tx = self.contract.functions.createWorkflow(
                 trigger_type,
@@ -72,7 +76,7 @@ class RegistryService:
                 gas_budget
             ).build_transaction({
                 'from': self.relayer.address,
-                'nonce': w3.eth.get_transaction_count(self.relayer.address),
+                'nonce': nonce,
                 'maxFeePerGas': max_fee,
                 'maxPriorityFeePerGas': max_priority_fee,
                 'chainId': settings.CHAIN_ID
@@ -82,7 +86,7 @@ class RegistryService:
             signed_tx = self.relayer.sign_transaction(tx)
             
             # Send transaction
-            tx_hash = w3.eth.send_raw_transaction(signed_tx.raw_transaction)
+            tx_hash = w3.eth.send_raw_transaction(signed_tx.rawTransaction)
             tx_hex = tx_hash.hex()
             
             logger.info(f"Created workflow for {user_address}, tx: {tx_hex}")
@@ -91,11 +95,25 @@ class RegistryService:
             receipt = w3.eth.wait_for_transaction_receipt(tx_hash, timeout=120)
             
             if receipt['status'] == 1:
-                logger.info(f"✅ Workflow created successfully, tx: {tx_hex}")
+                # Extract workflow ID from WorkflowCreated event
+                workflow_id = None
+                for log in receipt['logs']:
+                    try:
+                        # Parse WorkflowCreated event
+                        event = self.contract.events.WorkflowCreated().process_log(log)
+                        workflow_id = event['args']['workflowId']
+                        logger.info(f"✅ Workflow #{workflow_id} created successfully, tx: {tx_hex}")
+                        break
+                    except Exception:
+                        continue
+                
+                if not workflow_id:
+                    logger.warning(f"⚠️ Workflow created but ID not found in logs, tx: {tx_hex}")
+                    
+                return {"tx_hash": tx_hex, "workflow_id": workflow_id}
             else:
                 logger.error(f"❌ Workflow creation failed, tx: {tx_hex}")
-            
-            return tx_hex
+                raise Exception(f"Transaction failed with status {receipt['status']}")
             
         except Exception as e:
             logger.error(f"Failed to create workflow: {e}")
@@ -132,6 +150,27 @@ class RegistryService:
             logger.error(f"Failed to get workflows for {user_address}: {e}")
             raise
     
+    def get_workflow(self, workflow_id: int) -> Optional[Dict[str, Any]]:
+        """
+        Get a single workflow by ID
+        
+        Args:
+            workflow_id: Workflow ID
+            
+        Returns:
+            Workflow details dictionary or None if not found
+        """
+        try:
+            workflow = self._get_workflow_details(workflow_id)
+            if workflow:
+                logger.info(f"Retrieved workflow #{workflow_id}")
+            else:
+                logger.warning(f"Workflow #{workflow_id} not found")
+            return workflow
+        except Exception as e:
+            logger.error(f"Failed to get workflow #{workflow_id}: {e}")
+            raise
+    
     def _get_workflow_details(self, workflow_id: int) -> Optional[Dict[str, Any]]:
         """
         Get detailed information about a specific workflow
@@ -146,17 +185,17 @@ class RegistryService:
             # Call getWorkflow
             wf = self.contract.functions.getWorkflow(workflow_id).call()
             
-            # Parse workflow tuple
-            # (owner, triggerType, triggerData, nextRun, actionData, 
-            #  actionType, interval, active, gasBudget)
+            # Parse workflow tuple - CORRECT ORDER FROM CONTRACT:
+            # (owner, triggerType, triggerData, actionType, actionData, nextRun, interval, active, gasBudget)
+            #    0        1            2            3            4          5        6         7        8
             workflow = {
                 'id': workflow_id,
                 'owner': wf[0],
                 'trigger_type': wf[1],
                 'trigger_data': wf[2].hex() if isinstance(wf[2], bytes) else wf[2],
-                'next_run': wf[3],
+                'action_type': wf[3],      # FIXED: actionType is at index 3
                 'action_data': wf[4].hex() if isinstance(wf[4], bytes) else wf[4],
-                'action_type': wf[5],
+                'next_run': wf[5],         # FIXED: nextRun is at index 5
                 'interval': wf[6],
                 'active': wf[7],
                 'gas_budget': wf[8],
@@ -168,6 +207,82 @@ class RegistryService:
         except Exception as e:
             logger.error(f"Failed to get workflow {workflow_id}: {e}")
             return None
+    
+    def update_workflow_status(self, workflow_id: int, is_active: bool) -> str:
+        """
+        Update workflow status (pause/resume)
+        
+        Args:
+            workflow_id: Workflow ID
+            is_active: True to activate, False to pause
+            
+        Returns:
+            str: Transaction hash
+        """
+        try:
+            # Get current workflow details
+            workflow = self._get_workflow_details(workflow_id)
+            if not workflow:
+                raise ValueError(f"Workflow #{workflow_id} not found")
+            
+            # Calculate proper next_run timestamp
+            # If activating and next_run is in the past or corrupted (< 1000000000), calculate new next_run
+            current_time = int(time.time())
+            next_run = workflow['next_run']
+            
+            if is_active:
+                # If next_run is corrupted (< year 2001) or in the past, calculate new next_run
+                if next_run < 1000000000 or next_run < current_time:
+                    # Set next_run to current time + 60 seconds (execute immediately on first run)
+                    # Worker will update to current_time + interval after first execution
+                    next_run = current_time + 60
+                    logger.info(f"Calculating new next_run for workflow #{workflow_id}: {next_run} (will execute in 60 seconds)")
+            
+            # Get latest block for EIP-1559
+            latest_block = w3.eth.get_block('latest')
+            base_fee = latest_block.get('baseFeePerGas', 0)
+            max_priority_fee = w3.to_wei(2, 'gwei')
+            max_fee = (base_fee * 2) + max_priority_fee
+            
+            # Get nonce (includes pending transactions)
+            nonce = w3.eth.get_transaction_count(self.relayer.address, 'pending')
+            
+            # Build transaction to update status
+            tx = self.contract.functions.adminSetWorkflow(
+                workflow_id,
+                is_active,
+                next_run  # Use calculated or preserved next_run
+            ).build_transaction({
+                'from': self.relayer.address,
+                'nonce': nonce,
+                'maxFeePerGas': max_fee,
+                'maxPriorityFeePerGas': max_priority_fee,
+                'chainId': settings.CHAIN_ID
+            })
+            
+            # Sign and send
+            signed_tx = self.relayer.sign_transaction(tx)
+            tx_hash = w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+            tx_hex = tx_hash.hex()
+            
+            status = "activated" if is_active else "paused"
+            logger.info(f"Workflow #{workflow_id} {status}, tx: {tx_hex}, next_run: {next_run}")
+            
+            # Wait for confirmation (with timeout)
+            try:
+                receipt = w3.eth.wait_for_transaction_receipt(tx_hash, timeout=30)
+                if receipt['status'] == 1:
+                    logger.info(f"✅ Workflow #{workflow_id} {status} successfully")
+                else:
+                    logger.error(f"❌ Workflow #{workflow_id} status update failed")
+            except Exception as wait_err:
+                logger.warning(f"Transaction sent but confirmation timeout: {wait_err}")
+            
+            return tx_hex
+            
+        except Exception as e:
+            logger.error(f"Failed to update workflow {workflow_id} status: {e}")
+            raise
     
     def delete_workflow(self, workflow_id: int) -> str:
         """
@@ -186,6 +301,9 @@ class RegistryService:
             max_priority_fee = w3.to_wei(2, 'gwei')
             max_fee = (base_fee * 2) + max_priority_fee
             
+            # Get nonce (includes pending transactions)
+            nonce = w3.eth.get_transaction_count(self.relayer.address, 'pending')
+            
             # Build transaction to set workflow inactive
             tx = self.contract.functions.adminSetWorkflow(
                 workflow_id,
@@ -193,7 +311,7 @@ class RegistryService:
                 0       # nextRun = 0
             ).build_transaction({
                 'from': self.relayer.address,
-                'nonce': w3.eth.get_transaction_count(self.relayer.address),
+                'nonce': nonce,
                 'maxFeePerGas': max_fee,
                 'maxPriorityFeePerGas': max_priority_fee,
                 'chainId': settings.CHAIN_ID
@@ -201,10 +319,21 @@ class RegistryService:
             
             # Sign and send
             signed_tx = self.relayer.sign_transaction(tx)
-            tx_hash = w3.eth.send_raw_transaction(signed_tx.raw_transaction)
+            tx_hash = w3.eth.send_raw_transaction(signed_tx.rawTransaction)
             tx_hex = tx_hash.hex()
             
             logger.info(f"Deleted workflow #{workflow_id}, tx: {tx_hex}")
+            
+            # Wait for confirmation (with timeout)
+            try:
+                receipt = w3.eth.wait_for_transaction_receipt(tx_hash, timeout=30)
+                if receipt['status'] == 1:
+                    logger.info(f"✅ Workflow #{workflow_id} deleted successfully")
+                else:
+                    logger.error(f"❌ Workflow #{workflow_id} deletion failed")
+            except Exception as wait_err:
+                logger.warning(f"Transaction sent but confirmation timeout: {wait_err}")
+            
             return tx_hex
             
         except Exception as e:

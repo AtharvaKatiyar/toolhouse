@@ -51,16 +51,16 @@ contract ActionExecutor is AccessControl, ReentrancyGuard {
         nonReentrant
         onlyRole(WORKER_ROLE)
     {
-        // Charge gas first (ensures worker doesn't lose money)
-        if (gasToCharge > 0) {
-            escrow.chargeGas(userToCharge, gasToCharge);
-        }
-
-        // Execute the action
+        // Execute the action FIRST (before charging gas)
         bool success;
         bytes memory result;
 
         (success, result) = _executeRawAction(actionData);
+
+        // ONLY charge gas if execution was successful
+        if (success && gasToCharge > 0) {
+            escrow.chargeGas(userToCharge, gasToCharge);
+        }
 
         // Update nextRun inside registry (atomic)
         registry.adminSetWorkflow(workflowId, true, newNextRun);

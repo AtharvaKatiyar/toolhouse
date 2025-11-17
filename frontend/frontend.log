@@ -2,13 +2,122 @@
 > frontend@0.1.0 dev
 > next dev
 
- ⚠ Port 3000 is in use by an unknown process, using available port 3001 instead.
    ▲ Next.js 16.0.3 (Turbopack)
-   - Local:         http://localhost:3001
-   - Network:       http://192.168.10.188:3001
+   - Local:         http://localhost:3000
+   - Network:       http://192.168.10.188:3000
    - Environments: .env.local
 
  ✓ Starting...
- ⨯ Unable to acquire lock at /home/mime/Desktop/autometa/frontend/.next/dev/lock, is another instance of next dev running?
-   Suggestion: If you intended to restart next dev, terminate the other process, and then try again.
-[?25h
+ ✓ Ready in 1227ms
+ ○ Compiling /dashboard/workflows/[id] ...
+Lit is in dev mode. Not recommended for production! See https://lit.dev/msg/dev-mode for more information.
+ GET /dashboard 200 in 15.5s (compile: 14.2s, render: 1266ms)
+ HEAD /dashboard 200 in 669ms (compile: 502ms, render: 166ms)
+ ○ Compiling / ...
+ GET / 200 in 7.5s (compile: 7.4s, render: 61ms)
+ GET /explore 200 in 7.3s (compile: 7.2s, render: 34ms)
+ GET /dashboard 200 in 282ms (compile: 262ms, render: 21ms)
+ GET /dashboard 200 in 1041ms (compile: 745ms, render: 296ms)
+ ✓ Compiled in 0ms
+ GET /dashboard 200 in 510ms (compile: 453ms, render: 57ms)
+ GET /dashboard 200 in 389ms (compile: 348ms, render: 41ms)
+ GET /dashboard 200 in 549ms (compile: 448ms, render: 101ms)
+ GET /dashboard 200 in 441ms (compile: 384ms, render: 57ms)
+ GET /dashboard 200 in 434ms (compile: 386ms, render: 48ms)
+ GET /dashboard 200 in 467ms (compile: 412ms, render: 54ms)
+ GET /dashboard 200 in 614ms (compile: 564ms, render: 50ms)
+ GET /dashboard 200 in 584ms (compile: 508ms, render: 76ms)
+ GET /dashboard 200 in 568ms (compile: 514ms, render: 54ms)
+ GET /dashboard 200 in 501ms (compile: 447ms, render: 53ms)
+ GET /dashboard 200 in 453ms (compile: 416ms, render: 37ms)
+ GET /dashboard 200 in 420ms (compile: 379ms, render: 41ms)
+ GET /dashboard 200 in 299ms (compile: 269ms, render: 29ms)
+ GET /dashboard 200 in 312ms (compile: 281ms, render: 31ms)
+ GET /dashboard 200 in 307ms (compile: 279ms, render: 28ms)
+ GET /dashboard 200 in 291ms (compile: 256ms, render: 35ms)
+ GET /dashboard 200 in 290ms (compile: 260ms, render: 30ms)
+ GET /dashboard 200 in 293ms (compile: 260ms, render: 33ms)
+ GET /dashboard 200 in 296ms (compile: 263ms, render: 33ms)
+ GET /dashboard 200 in 304ms (compile: 272ms, render: 33ms)
+ GET /dashboard 200 in 367ms (compile: 317ms, render: 50ms)
+ GET /dashboard 200 in 384ms (compile: 340ms, render: 45ms)
+ GET /dashboard 200 in 316ms (compile: 286ms, render: 30ms)
+ GET /dashboard 200 in 301ms (compile: 265ms, render: 35ms)
+ GET /dashboard 200 in 296ms (compile: 262ms, render: 34ms)
+ ✓ Compiled in 568ms
+ ○ Compiling /dashboard/transactions ...
+ GET /dashboard/transactions 200 in 5.0s (compile: 5.0s, render: 29ms)
+ ○ Compiling /dashboard/escrow ...
+ GET /dashboard/escrow 200 in 3.8s (compile: 3.8s, render: 26ms)
+ ✓ Compiled in 637ms
+ GET /dashboard 200 in 293ms (compile: 269ms, render: 24ms)
+ GET /dashboard/transactions 200 in 325ms (compile: 304ms, render: 22ms)
+WalletConnect Core is already initialized. This is probably a mistake and can lead to unexpected behavior. Init() was called 2 times.
+WalletConnect Core is already initialized. This is probably a mistake and can lead to unexpected behavior. Init() was called 2 times.
+Multiple versions of Lit loaded. Loading multiple versions is not recommended. See https://lit.dev/msg/multiple-versions for more information.
+ GET /dashboard/transactions 200 in 988ms (compile: 297ms, render: 690ms)
+ HEAD /dashboard/transactions 200 in 299ms (compile: 236ms, render: 63ms)
+ ✓ Compiled in 372ms
+WalletConnect Core is already initialized. This is probably a mistake and can lead to unexpected behavior. Init() was called 3 times.
+WalletConnect Core is already initialized. This is probably a mistake and can lead to unexpected behavior. Init() was called 3 times.
+ GET /dashboard 200 in 716ms (compile: 305ms, render: 411ms)
+ HEAD /dashboard 200 in 272ms (compile: 209ms, render: 63ms)
+ GET /dashboard/workflows/18 200 in 1435ms (compile: 1365ms, render: 71ms)
+ GET /dashboard 200 in 277ms (compile: 255ms, render: 22ms)
+ ○ Compiling /dashboard/workflows ...
+ GET /dashboard/workflows 200 in 3.9s (compile: 3.9s, render: 28ms)
+ GET /dashboard 200 in 238ms (compile: 224ms, render: 15ms)
+ GET /explore 200 in 625ms (compile: 587ms, render: 38ms)
+ ○ Compiling /automation/[slug] ...
+ GET /automation/daily-transfer 200 in 7.6s (compile: 7.6s, render: 25ms)
+WalletConnect Core is already initialized. This is probably a mistake and can lead to unexpected behavior. Init() was called 4 times.
+WalletConnect Core is already initialized. This is probably a mistake and can lead to unexpected behavior. Init() was called 4 times.
+ GET /dashboard/transactions 200 in 3.0s (compile: 445ms, render: 2.6s)
+ HEAD /dashboard/transactions 200 in 290ms (compile: 222ms, render: 67ms)
+ GET /dashboard?workflow=19&refresh=1 200 in 268ms (compile: 248ms, render: 21ms)
+ GET /dashboard/transactions 200 in 307ms (compile: 230ms, render: 76ms)
+ HEAD /dashboard/transactions 200 in 285ms (compile: 221ms, render: 64ms)
+ ✓ Compiled in 415ms
+ ✓ Compiled in 308ms
+ ✓ Compiled in 143ms
+ ✓ Compiled in 190ms
+ ✓ Compiled in 298ms
+ ✓ Compiled in 293ms
+ ✓ Compiled in 619ms
+ ✓ Compiled in 344ms
+WalletConnect Core is already initialized. This is probably a mistake and can lead to unexpected behavior. Init() was called 5 times.
+WalletConnect Core is already initialized. This is probably a mistake and can lead to unexpected behavior. Init() was called 5 times.
+ GET /dashboard/transactions 200 in 1239ms (compile: 471ms, render: 768ms)
+ HEAD /dashboard/transactions 200 in 296ms (compile: 231ms, render: 65ms)
+ ✓ Compiled in 277ms
+ GET /dashboard?workflow=19&refresh=1 200 in 1276ms (compile: 387ms, render: 890ms)
+ HEAD /dashboard 200 in 326ms (compile: 248ms, render: 78ms)
+ ✓ Compiled in 553ms
+ ✓ Compiled in 908ms
+ ✓ Compiled in 119ms
+ ✓ Compiled in 1290ms
+ ✓ Compiled in 2.5s
+WalletConnect Core is already initialized. This is probably a mistake and can lead to unexpected behavior. Init() was called 6 times.
+WalletConnect Core is already initialized. This is probably a mistake and can lead to unexpected behavior. Init() was called 6 times.
+ GET /dashboard/transactions 200 in 27.7s (compile: 17.7s, render: 10.0s)
+ HEAD /dashboard/transactions 200 in 344ms (compile: 289ms, render: 54ms)
+ GET / 200 in 2.9s (compile: 2.9s, render: 17ms)
+ GET /dashboard 200 in 827ms (compile: 736ms, render: 91ms)
+ GET /dashboard/escrow 200 in 487ms (compile: 398ms, render: 89ms)
+ GET /dashboard 200 in 246ms (compile: 226ms, render: 20ms)
+ GET /explore 200 in 428ms (compile: 407ms, render: 21ms)
+ GET /automation/price-based-buy 200 in 861ms (compile: 817ms, render: 43ms)
+ GET /explore 200 in 249ms (compile: 228ms, render: 21ms)
+ GET /automation/dca-weekly 200 in 361ms (compile: 338ms, render: 23ms)
+ GET /explore 200 in 258ms (compile: 242ms, render: 15ms)
+ GET /automation/daily-transfer 200 in 342ms (compile: 319ms, render: 23ms)
+ GET / 200 in 249ms (compile: 236ms, render: 13ms)
+ GET /explore 200 in 233ms (compile: 216ms, render: 17ms)
+ GET /dashboard 200 in 222ms (compile: 207ms, render: 15ms)
+ GET /dashboard/escrow 200 in 233ms (compile: 217ms, render: 16ms)
+ GET /dashboard 200 in 263ms (compile: 245ms, render: 18ms)
+ GET / 200 in 266ms (compile: 250ms, render: 16ms)
+ GET /explore 200 in 229ms (compile: 215ms, render: 14ms)
+ GET /automation/daily-transfer 200 in 358ms (compile: 337ms, render: 21ms)
+ GET /dashboard?workflow=20&refresh=1 200 in 265ms (compile: 251ms, render: 15ms)
+ GET /dashboard/transactions 200 in 271ms (compile: 243ms, render: 29ms)

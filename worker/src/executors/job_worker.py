@@ -65,6 +65,27 @@ class JobWorker:
         gas_budget = int(job.get("gasBudget", 0) or 0)
         retry_count = int(job.get("retryCount", 0))
         
+        # CHECK ESCROW BALANCE BEFORE EXECUTION
+        try:
+            import os
+            import requests
+            backend_url = os.getenv("BACKEND_API_URL", "http://localhost:8000/api")
+            balance_response = requests.get(f"{backend_url}/escrow/balance/{owner}", timeout=5)
+            if balance_response.status_code == 200:
+                balance_data = balance_response.json()
+                current_balance = int(balance_data.get("balance", 0))
+                
+                if current_balance < gas_budget:
+                    logger.warning(f"⚠️  SKIPPING workflow #{workflow_id} - insufficient escrow balance")
+                    logger.warning(f"   Owner: {owner}")
+                    logger.warning(f"   Balance: {self.w3.from_wei(current_balance, 'ether')} DEV")
+                    logger.warning(f"   Required: {self.w3.from_wei(gas_budget, 'ether')} DEV")
+                    logger.warning(f"   Shortfall: {self.w3.from_wei(gas_budget - current_balance, 'ether')} DEV")
+                    return  # Skip execution, don't re-enqueue
+        except Exception as e:
+            logger.warning(f"⚠️  Could not check balance for workflow #{workflow_id}: {e}")
+            # Continue with execution if balance check fails (fail-safe)
+        
         # Decode action data from hex string to bytes
         if isinstance(action_data_raw, str):
             # Remove 0x prefix if present
@@ -78,41 +99,40 @@ class JobWorker:
         interval = job.get("interval", 60)
         new_next_run = int(time.time()) + interval
 
-        # Retry loop
-        attempts = 0
-        while attempts < self.max_retries:
-            try:
-                logger.info(f"⚙️  Executing workflow #{workflow_id} (attempt {attempts + 1}/{self.max_retries})")
-                
-                # Execute workflow on-chain via ActionExecutor contract
-                receipt = self.executor.execute_workflow(
-                    workflow_id=workflow_id,
-                    action_data=action_bytes,
-                    new_next_run=new_next_run,
-                    user=owner,
-                    gas_to_charge=gas_budget,
-                    wait_receipt=True
-                )
-                
-                # Success - log transaction details
-                tx_hash = receipt.transactionHash.hex() if hasattr(receipt, 'transactionHash') else receipt
-                status = getattr(receipt, 'status', 'unknown')
-                logger.info(f"✅ Workflow #{workflow_id} executed successfully: tx={tx_hash} status={status}")
-                return
-                
-            except Exception as e:
-                attempts += 1
-                logger.error(f"❌ Execution failed for workflow #{workflow_id} attempt {attempts}/{self.max_retries}: {e}")
-                
-                if attempts < self.max_retries:
-                    # Exponential backoff before retry
-                    delay = self.retry_delay * attempts
-                    logger.info(f"⏳ Retrying in {delay}s...")
-                    time.sleep(delay)
-                else:
-                    # Max retries exhausted - re-enqueue for later
-                    logger.error(f"💀 Max retries reached for workflow #{workflow_id}. Re-enqueueing for later processing.")
-                    # Increment retry count and push back to queue
-                    job["retryCount"] = retry_count + 1
-                    self.queue.push_job(job)
-                    break
+        # Execute ONCE only - no retries, no re-enqueue
+        # Scheduler will handle the next execution at the scheduled time
+        try:
+            logger.info(f"⚙️  Executing workflow #{workflow_id} (single attempt)")
+            
+            # Execute workflow on-chain via ActionExecutor contract
+            receipt = self.executor.execute_workflow(
+                workflow_id=workflow_id,
+                action_data=action_bytes,
+                new_next_run=new_next_run,
+                user=owner,
+                gas_to_charge=gas_budget,
+                wait_receipt=True
+            )
+            
+            # Success - log transaction details
+            tx_hash = receipt.transactionHash.hex() if hasattr(receipt, 'transactionHash') else receipt
+            status = getattr(receipt, 'status', 'unknown')
+            logger.info(f"✅ Workflow #{workflow_id} executed successfully: tx={tx_hash} status={status}")
+            return
+            
+        except Exception as e:
+            logger.error(f"❌ Execution failed for workflow #{workflow_id}: {e}")
+            
+            # Check if error is due to insufficient balance
+            error_msg = str(e).lower()
+            is_balance_error = "insufficient balance" in error_msg or "insufficient funds" in error_msg
+            
+            if is_balance_error:
+                logger.error(f"💀 Balance error - workflow #{workflow_id} will wait for next scheduled run")
+                logger.error(f"   Owner needs to deposit more funds to escrow.")
+            else:
+                logger.error(f"💀 Execution error - workflow #{workflow_id} will retry at next scheduled time")
+            
+            # DO NOT retry, DO NOT re-enqueue
+            # Let the scheduler handle the next attempt at the scheduled next_run time
+            return
